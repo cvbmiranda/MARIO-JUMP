@@ -1,73 +1,229 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(#87ceeb, #e0f6ff);
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Piso do game-board até o final da tela */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 500px; /* começa logo abaixo do game-board */
+  bottom: 0; /* vai até o final da tela */
+  background:
+    radial-gradient(circle at 12px 10px, rgba(0,0,0,0.08) 0 2px, transparent 3px) bottom / 36px 18px repeat-x,
+    radial-gradient(circle at 28px 6px, rgba(0,0,0,0.06) 0 1.5px, transparent 2.5px) bottom / 36px 18px repeat-x,
+    repeating-linear-gradient(90deg, #2fad2f 0 10px, #2aa22a 10px 20px) top / 100% 14px no-repeat,
+    linear-gradient(#c0661b, #a65516);
+  border-top: 4px solid #2b8b2b;
+  z-index: 5;
 }
 
 .game-board {
-    width: 100%;
-    height: 500px;
-    border-bottom: 15px solid rgb(35, 160, 35);
-    margin : 0 auto;
-    position: relative; 
-    overflow: hidden;
-    background: linear-gradient( #87ceeb, #e0f6ff);
+  width: 100%;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  background:
+    /* camada distante do céu com gradiente suave */
+    linear-gradient(#87ceeb, #cbeeff);
+  /* controla a velocidade base do cenário */
+  --ground-duration: 2s;
+  --cloud-speed-slow: 60s;
+  --cloud-speed-med: 40s;
+  --cloud-speed-fast: 25s;
+  z-index: 10; /* acima do piso do body */
 }
 
+/* HUD estilo arcade */
+.hud {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Press Start 2P', system-ui, monospace;
+  z-index: 50;
+}
+
+.hud .line {
+  display: flex;
+  gap: 40px;
+  font-size: 18px;
+  color: #ffffff;
+  text-shadow: 3px 3px 0 #000000, 0 0 6px #2a8cff;
+  margin-bottom: 5px;
+}
+
+#score, #highScore, #coins, #highCoins {
+  letter-spacing: 2px;
+}
+
+/* Botão Reiniciar separado */
+.restart {
+  position: absolute;
+  top: 280px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 28px;
+  font-size: 16px;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  background: #fbd000;
+  color: #5a2c00;
+  border: 4px solid #5a2c00;
+  border-radius: 8px;
+  box-shadow: inset -4px -4px 0 #d39a00, inset 4px 4px 0 #fff08a, 0 6px 0 #5a2c00;
+  cursor: pointer;
+  display: none;
+  transition: transform 0.2s;
+  z-index: 60;
+}
+.restart:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.05);
+}
+
+/* Overlay Game Over */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 55;
+  animation: overlay-fade-in 0.3s ease-out;
+}
+.overlay-box {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  border: 4px solid #8b0000;
+  box-shadow: 
+    inset -6px -6px 0 #cc4444, 
+    inset 6px 6px 0 #ff8a8a, 
+    0 8px 0 #8b0000,
+    0 0 20px rgba(255, 107, 107, 0.3);
+  padding: 24px 32px;
+  border-radius: 12px;
+  text-align: center;
+  animation: overlay-bounce 0.5s ease-out 0.2s both;
+}
+.overlay-title {
+  font-family: 'Press Start 2P', system-ui, monospace;
+  color: #ffffff;
+  font-size: 22px;
+  text-shadow: 4px 4px 0 #8b0000, 0 0 8px rgba(0,0,0,0.5);
+  margin-bottom: 12px;
+  animation: title-pulse 1s ease-in-out infinite alternate;
+}
+.overlay-sub {
+  font-family: 'Press Start 2P', system-ui, monospace;
+  color: #fff8dc;
+  font-size: 10px;
+  text-shadow: 2px 2px 0 #8b0000;
+}
+
+/* Animações do overlay */
+@keyframes overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes overlay-bounce {
+  0% { transform: scale(0.3) rotate(-5deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes title-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+/* Obstáculo */
 .pipe {
-    position: absolute;
-    bottom: 0;
-    width: 80px;
-    animation: pipe-animation 1.5s linear infinite;
+  position: absolute;
+  bottom: 0;
+  width: 80px;
+  animation: pipe-animation 1.5s linear infinite;
+  z-index: 30;
 }
 
+/* Mario */
 .mario {
-    width: 150px;
-    position: absolute;
-    bottom: 0;
+  width: 150px;
+  position: absolute;
+  bottom: 0;
+  z-index: 40;
 }
 
-.jump{
-    animation: jump 500ms ease-out;
+.jump {
+  animation: jump 500ms ease-out;
 }
 
+/* Moeda */
+.coin {
+  position: absolute;
+  width: 50px;
+  bottom: 150px;
+  right: -60px;
+  animation: coin-animation 3s linear infinite;
+  z-index: 35;
+}
+
+/* Nuvens */
 .clouds {
-    position: absolute;
-    width: 500px;
-    animation: cloud-animation 20s linear infinite;
+  position: absolute;
+  width: 400px;
+  opacity: 0.8;
+  z-index: 10;
+  image-rendering: pixelated;
+}
+.cloud1 {
+  top: 50px;
+  animation: cloud-animation var(--cloud-speed-fast) linear infinite;
+}
+.cloud2 {
+  top: 100px;
+  animation: cloud-animation var(--cloud-speed-med) linear infinite;
+}
+.cloud3 {
+  top: 20px;
+  animation: cloud-animation var(--cloud-speed-slow) linear infinite;
 }
 
+
+/* Animações */
 @keyframes pipe-animation {
-    from {
-        right: 0;
-    }
-    to {
-        right: 100%;
-    }
+  from { right: 0; }
+  to { right: 100%; }
 }
 
 @keyframes jump {
-    0% {
-        bottom: 0;
-    }
-    40% {
-        bottom: 180px;
-    }
-    50% {
-        bottom: 180px;
-    }                                       
-    60% {
-        bottom: 180px;
-    }
-    100% {
-        bottom: 0;
-    }
+  0% { bottom: 0; }
+  40% { bottom: 180px; }
+  60% { bottom: 180px; }
+  100% { bottom: 0; }
 }
+
+@keyframes coin-animation {
+  from { right: -60px; }
+  to { right: 100%; }
+}
+
 @keyframes cloud-animation {
-    from {
-        right: 0;
-    }
-    to {
-        right: 100%;
-    }
+  from { right: -500px; }
+  to { right: 100%; }
 }

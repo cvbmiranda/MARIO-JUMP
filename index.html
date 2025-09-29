@@ -2,21 +2,57 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-s  cale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script defer src="./js/script.js"></script>
+    <script defer src="js/script.js"></script>
 
     <title>Mario Jump</title>
 </head>
 <body>
-
     <div class="game-board">
-        <img src="./images/clouds.png" class="clouds" id="cloud">
-        <img src="./images/pipe.png" class="pipe" id="pipe">
-        <img src="./images/mario.gif" class="mario" id="mario">
+        <!-- HUD no estilo arcade -->
+        <div class="hud">
+            <div class="line">
+                <span id="score">0000</span>
+                <span id="highScore">HI 0000</span>
+            </div>
+            <div class="line">
+                <span id="coins">Moedas: 0</span>
+                <span id="highCoins">Recorde: 0</span>
+            </div>
+        </div>
+
+
+        <!-- Cenário -->
+        <img src="images/clouds.png" class="clouds cloud1">
+        <img src="images/clouds.png" class="clouds cloud2">
+        <img src="images/clouds.png" class="clouds cloud3">
+
+        <!-- Obstáculo -->
+        <img src="images/pipe.png" class="pipe" id="pipe">
+
+        <!-- Mario -->
+        <img src="images/mario.gif" class="mario" id="mario">
+
+        <!-- Moeda -->
+        <img src="images/coin.png" class="coin" id="coin">
+
         
+
+        <!-- Overlay Game Over -->
+        <div class="overlay" id="overlay">
+            <div class="overlay-box">
+                <div class="overlay-title">GAME OVER</div>
+                <div class="overlay-sub">Pressione Reiniciar</div>
+            </div>
+        </div>
+
+        <!-- Botão Reiniciar -->
+        <button class="restart" id="restart">Reiniciar</button>
     </div>
-    
 </body>
 </html>
